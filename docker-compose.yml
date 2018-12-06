@@ -1,0 +1,33 @@
+version: '3.6'
+services:
+    turtl:
+        container_name: turtl
+        labels:
+        - "traefik.enable=true"
+        - "traefik.backend=turtl"
+        - "traefik.network=proxy"
+        - "traefik.port=8181"
+        - "traefik.frontend.rule=Host:turtl.example.com"
+        image: turtl:latest
+        networks:
+         - proxy
+         - backend
+    postgres:
+        container_name: postgres
+        environment:
+          - POSTGRES_USER=slappy
+          - POSTGRES_PASSWORD=floppy
+          - POSTGRES_DB=turtl
+          - POSTGRES_DATABSE=turtl
+        image: postgres
+        labels:
+        - "traefik.enable=false"
+        networks:
+         - backend
+        volumes:
+          - ./data:/var/lib/postgresql/data
+networks:
+  proxy:
+    external: true
+  backend:
+    internal: true
